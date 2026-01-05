@@ -360,15 +360,15 @@ const PatientInputScreen = ({ navigation }) => {
               onValueChange={(value) => setPatientData({ ...patientData, ethnicity: value })}
               style={styles.picker}
             >
-              <Picker.Item label="Select Ethnicity" value="" />
-              <Picker.Item label="South Asian" value="1" />
-              <Picker.Item label="Black African/Caribbean" value="2" />
-              <Picker.Item label="Mixed other" value="3" />
-              <Picker.Item label="White Other" value="4" />
-              <Picker.Item label="White British / Irish" value="5" />
-              <Picker.Item label="Black other" value="6" />
-              <Picker.Item label="Mixed white and black" value="7" />
-              <Picker.Item label="Not Stated" value="8" />
+              <Picker.Item label="Select Ethnicity" value="1" />
+              <Picker.Item label="South Asian" value="2" />
+              <Picker.Item label="Black African/Caribbean" value="3" />
+              <Picker.Item label="Mixed other" value="4" />
+              <Picker.Item label="White Other" value="5" />
+              <Picker.Item label="White British / Irish" value="6" />
+              <Picker.Item label="Black other" value="7" />
+              <Picker.Item label="Mixed white and black" value="8" />
+              <Picker.Item label="Not Stated" value="9" />
             </Picker>
           </View>
         </View>
