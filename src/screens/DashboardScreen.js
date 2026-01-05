@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../constants/colors';
 import { getCurrentUser, getUserProfile, getPatientAnalyses } from '../firebase/firebaseService';
 
@@ -52,7 +53,7 @@ const DashboardScreen = ({ navigation }) => {
             <Text style={styles.headerName}>{doctorName}</Text>
           </View>
           <TouchableOpacity style={styles.notificationBadge}>
-            <Text style={styles.notificationIcon}>🔔</Text>
+            <Icon name="notifications-outline" size={28} color={COLORS.white} />
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{highRiskCount}</Text>
             </View>
@@ -82,28 +83,28 @@ const DashboardScreen = ({ navigation }) => {
             style={styles.actionCard}
             onPress={() => navigation.navigate('PatientInput')}
           >
-            <Text style={styles.actionIcon}>📝</Text>
+            <Icon name="document-text-outline" size={40} color={COLORS.primary} />
             <Text style={styles.actionText}>New Analysis</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => navigation.navigate('PatientList')}
           >
-            <Text style={styles.actionIcon}>👥</Text>
+            <Icon name="people-outline" size={40} color={COLORS.primary} />
             <Text style={styles.actionText}>Patient List</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => navigation.navigate('Analytics')}
           >
-            <Text style={styles.actionIcon}>📊</Text>
+            <Icon name="bar-chart-outline" size={40} color={COLORS.primary} />
             <Text style={styles.actionText}>Analytics</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => navigation.navigate('Settings')}
           >
-            <Text style={styles.actionIcon}>⚙️</Text>
+            <Icon name="settings-outline" size={40} color={COLORS.primary} />
             <Text style={styles.actionText}>Settings</Text>
           </TouchableOpacity>
         </View>
@@ -114,7 +115,7 @@ const DashboardScreen = ({ navigation }) => {
           <Text style={styles.loadingText}>Loading...</Text>
         ) : analyses.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateIcon}>📋</Text>
+            <Icon name="clipboard-outline" size={60} color={COLORS.textSecondary} />
             <Text style={styles.emptyStateText}>No analyses yet</Text>
             <Text style={styles.emptyStateSubtext}>
               Start by analyzing your first patient
@@ -138,11 +139,19 @@ const DashboardScreen = ({ navigation }) => {
                 <Text style={styles.recentCardId}>
                   {analysis.patientData?.patientId || 'Unknown'}
                 </Text>
-                <Text style={styles.recentCardRisk}>
-                  {analysis.results?.riskScore >= 0.7
-                    ? '🔴 High Risk'
-                    : '🟢 Low Risk'}
-                </Text>
+                <View style={styles.riskContainer}>
+                  <Icon 
+                    name={analysis.results?.riskScore >= 0.7 ? "alert-circle" : "checkmark-circle"} 
+                    size={16} 
+                    color={analysis.results?.riskScore >= 0.7 ? COLORS.danger : COLORS.success} 
+                  />
+                  <Text style={[
+                    styles.recentCardRisk,
+                    { color: analysis.results?.riskScore >= 0.7 ? COLORS.danger : COLORS.success }
+                  ]}>
+                    {analysis.results?.riskScore >= 0.7 ? 'High Risk' : 'Low Risk'}
+                  </Text>
+                </View>
               </View>
               <Text style={styles.recentCardTime}>
                 {new Date(analysis.timestamp?.toDate()).toLocaleDateString()}
@@ -179,9 +188,6 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: 'relative',
-  },
-  notificationIcon: {
-    fontSize: 28,
   },
   badge: {
     position: 'absolute',
@@ -250,14 +256,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 2,
   },
-  actionIcon: {
-    fontSize: 40,
-    marginBottom: 10,
-  },
   actionText: {
     fontSize: 14,
     color: COLORS.text,
     textAlign: 'center',
+    marginTop: 10,
   },
   recentCard: {
     backgroundColor: COLORS.white,
@@ -278,10 +281,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.text,
   },
+  riskContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    gap: 5,
+  },
   recentCardRisk: {
     fontSize: 14,
-    color: COLORS.textSecondary,
-    marginTop: 5,
+    fontWeight: '500',
   },
   recentCardTime: {
     fontSize: 12,
@@ -296,14 +304,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 40,
   },
-  emptyStateIcon: {
-    fontSize: 60,
-    marginBottom: 15,
-  },
   emptyStateText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.text,
+    marginTop: 15,
     marginBottom: 5,
   },
   emptyStateSubtext: {
@@ -314,3 +319,4 @@ const styles = StyleSheet.create({
 });
 
 export default DashboardScreen;
+
