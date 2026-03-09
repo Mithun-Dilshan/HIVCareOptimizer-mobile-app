@@ -20,6 +20,9 @@ import TreatmentRecommendationScreen from '../screens/TreatmentRecommendationScr
 import PatientListScreen from '../screens/PatientListScreen';
 import AnalyticsScreen from '../screens/AnalyticsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import AdherenceHomeScreen from '../screens/AdherenceHomeScreen';
+import AdherenceDashboardScreen from '../screens/EnhancedAdherenceDashboardScreen';
+import AdherenceHistoryScreen from '../screens/AdherenceHistoryScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +47,10 @@ export default function AppNavigator() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
+        presentation: 'card',
+        cardStyle: { backgroundColor: 'transparent' },
+        cardOverlayEnabled: false,
+        detachInactiveScreens: false,
       }}
     >
       {!user ? (
@@ -67,6 +74,9 @@ export default function AppNavigator() {
           <Stack.Screen name="PatientList" component={PatientListScreen} />
           <Stack.Screen name="Analytics" component={AnalyticsScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="AdherenceHome" component={AdherenceHomeScreen} />
+          <Stack.Screen name="AdherenceDashboard" component={AdherenceDashboardScreen} />
+          <Stack.Screen name="AdherenceHistory" component={AdherenceHistoryScreen} />
         </>
       )}
     </Stack.Navigator>
@@ -88,4 +98,7 @@ export type RootStackParamList = {
   PatientList: undefined;
   Analytics: undefined;
   Settings: undefined;
+  AdherenceHome: undefined;
+  AdherenceDashboard: undefined;
+  AdherenceHistory: undefined;
 };

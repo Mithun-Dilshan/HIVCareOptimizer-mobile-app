@@ -396,10 +396,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from '../constants/colors';
 
 const ResultsScreen = ({ navigation, route }) => {
-  const { patientData, apiResult } = route.params;
+  const { patientData, apiResult } = route.params || {};
 
   // Map API result to display data
   const getRiskScore = () => {
+    if (!apiResult || !apiResult.predicted_resistance_level) return 0.5; // Default moderate risk
     const resistanceLevel = apiResult.predicted_resistance_level;
     // Map resistance levels to risk scores
     if (resistanceLevel === 'H') return 0.9;
@@ -410,7 +411,7 @@ const ResultsScreen = ({ navigation, route }) => {
   };
 
   const riskScore = getRiskScore();
-  const riskLevel = apiResult.risk_category || 'MODERATE';
+  const riskLevel = apiResult?.risk_category || 'MODERATE';
 
   const getRiskColor = () => {
     if (riskScore >= 0.7) return COLORS.danger;
@@ -444,7 +445,7 @@ const ResultsScreen = ({ navigation, route }) => {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: `HIV Drug Resistance Analysis Report\n\nPatient: ${patientData.patientId}\nResistance Level: ${getResistanceLevelText(apiResult.predicted_resistance_level)}\nRisk Score: ${(riskScore * 100).toFixed(0)}%\nRecommendation: ${apiResult.recommendation}`,
+        message: `HIV Drug Resistance Analysis Report\n\nPatient: ${patientData?.patientId || 'Unknown'}\nResistance Level: ${getResistanceLevelText(apiResult?.predicted_resistance_level)}\nRisk Score: ${(riskScore * 100).toFixed(0)}%\nRecommendation: ${apiResult?.recommendation || 'No recommendation available'}`,
         title: 'Analysis Report'
       });
       
@@ -473,7 +474,7 @@ const ResultsScreen = ({ navigation, route }) => {
           <View style={styles.patientInfoRow}>
             <Icon name="account" size={20} color={COLORS.primary} />
             <Text style={styles.patientInfoText}>
-              Patient: {patientData.patientId} ({patientData.sex}, {patientData.age}yo)
+              Patient: {patientData?.patientId || 'Unknown'} ({patientData?.sex || 'N/A'}, {patientData?.age || 'N/A'}yo)
             </Text>
           </View>
           <View style={styles.patientInfoRow}>
@@ -503,11 +504,11 @@ const ResultsScreen = ({ navigation, route }) => {
           <View style={styles.resistanceBadgeContainer}>
             <View style={[styles.resistanceLevelCircle, { borderColor: getRiskColor() }]}>
               <Text style={[styles.resistanceLevelBig, { color: getRiskColor() }]}>
-                {apiResult.predicted_resistance_level}
+                {apiResult?.predicted_resistance_level || 'N/A'}
               </Text>
             </View>
             <Text style={[styles.resistanceLevelText, { color: getRiskColor() }]}>
-              {getResistanceLevelText(apiResult.predicted_resistance_level)}
+              {getResistanceLevelText(apiResult?.predicted_resistance_level)}
             </Text>
           </View>
 
@@ -529,21 +530,21 @@ const ResultsScreen = ({ navigation, route }) => {
             <View style={styles.mutationHeader}>
               <Icon name="dna" size={20} color={COLORS.text} />
               <Text style={styles.mutationText}>
-                Total Mutations: {apiResult.total_mutations}
+                Total Mutations: {apiResult?.total_mutations || 0}
               </Text>
             </View>
             <View style={styles.mutationBreakdownContainer}>
               <View style={styles.mutationItem}>
                 <Icon name="pill" size={16} color={COLORS.textSecondary} />
-                <Text style={styles.mutationBreakdown}>PI: {patientData.PI_MU_Count}</Text>
+                <Text style={styles.mutationBreakdown}>PI: {patientData?.PI_MU_Count || 0}</Text>
               </View>
               <View style={styles.mutationItem}>
                 <Icon name="pill" size={16} color={COLORS.textSecondary} />
-                <Text style={styles.mutationBreakdown}>NRTI: {patientData.NRTI_MU_Count}</Text>
+                <Text style={styles.mutationBreakdown}>NRTI: {patientData?.NRTI_MU_Count || 0}</Text>
               </View>
               <View style={styles.mutationItem}>
                 <Icon name="pill" size={16} color={COLORS.textSecondary} />
-                <Text style={styles.mutationBreakdown}>NNRTI: {patientData.NNRTI_MU_Count}</Text>
+                <Text style={styles.mutationBreakdown}>NNRTI: {patientData?.NNRTI_MU_Count || 0}</Text>
               </View>
             </View>
           </View>
@@ -555,7 +556,7 @@ const ResultsScreen = ({ navigation, route }) => {
           <Text style={styles.resultSectionTitle}>RESISTANCE PROBABILITIES</Text>
         </View>
         <View style={styles.probabilitiesCard}>
-          {Object.entries(apiResult.all_probabilities).map(([level, prob]) => (
+          {apiResult?.all_probabilities ? Object.entries(apiResult.all_probabilities).map(([level, prob]) => (
             <View key={level} style={styles.probRow}>
               <Text style={styles.probLabel}>{getResistanceLevelText(level)}:</Text>
               <View style={styles.probBarContainer}>
@@ -568,7 +569,9 @@ const ResultsScreen = ({ navigation, route }) => {
               </View>
               <Text style={styles.probValue}>{(prob * 100).toFixed(1)}%</Text>
             </View>
-          ))}
+          )) : (
+            <Text style={styles.noDataText}>No probability data available</Text>
+          )}
         </View>
 
         {/* Recommendation */}
@@ -580,11 +583,11 @@ const ResultsScreen = ({ navigation, route }) => {
           <View style={styles.recommendationHeader}>
             <Icon name="lightbulb" size={24} color={getRiskColor()} />
             <Text style={[styles.recommendationTitle, { color: getRiskColor() }]}>
-              {apiResult.recommendation}
+              {apiResult?.recommendation || 'No recommendation available'}
             </Text>
           </View>
           <Text style={styles.recommendationText}>
-            {apiResult.explanation}
+            {apiResult?.explanation || 'No explanation available'}
           </Text>
         </View>
 
@@ -884,6 +887,12 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     fontSize: 16,
     fontWeight: '600',
+  },
+  noDataText: {
+    fontSize: 16,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    padding: 20,
   },
 });
 

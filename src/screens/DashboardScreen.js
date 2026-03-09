@@ -107,6 +107,13 @@ const DashboardScreen = ({ navigation }) => {
             <Icon name="settings-outline" size={40} color={COLORS.primary} />
             <Text style={styles.actionText}>Settings</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionCard}
+            onPress={() => navigation.navigate('AdherenceHome')}
+          >
+            <Icon name="medical-outline" size={40} color={COLORS.primary} />
+            <Text style={styles.actionText}>Adherence Tracker</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Recent Analyses */}
